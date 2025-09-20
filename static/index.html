@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>溫溼度監控儀表板</title>
+    <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        margin: 40px;
+      }
+      .card {
+        border: 1px solid #ccc;
+        padding: 20px;
+        margin: 10px;
+        width: 200px;
+        display: inline-block;
+      }
+      h2 {
+        margin: 0 0 15px;
+      }
+      p {
+        font-size: 24px;
+        margin: 5px 0;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>🌡️ 即時溫溼度監控</h1>
+    <div id="status">連線中...</div>
+    <hr />
+    <div class="card">
+      <h2>溫度</h2>
+      <p id="temperature">-- °C</p>
+    </div>
+    <div class="card">
+      <h2>濕度</h2>
+      <p id="humidity">-- %</p>
+    </div>
+    <div class="card">
+      <h2>電壓</h2>
+      <p id="voltage">-- V</p>
+    </div>
+    <div class="card">
+      <h2>電量</h2>
+      <p id="battery">-- %</p>
+    </div>
+
+    <script>
+      const socket = io();
+
+      socket.on("connect", () => {
+        document.getElementById("status").innerText = "✅ 已連線到伺服器";
+      });
+
+      socket.on("sensor_data", (data) => {
+        document.getElementById("temperature").innerText =
+          data.temperature + " °C";
+        document.getElementById("humidity").innerText = data.humidity + " %";
+        document.getElementById("voltage").innerText = data.voltage + " V";
+        document.getElementById("battery").innerText = data.battery + " %";
+      });
+
+      socket.on("disconnect", () => {
+        document.getElementById("status").innerText = "❌ 伺服器斷線";
+      });
+    </script>
+  </body>
+</html>
